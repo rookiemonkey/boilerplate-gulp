@@ -14,12 +14,17 @@ const compress_images = require("compress-images")
 // ===========================================================================
 
 /**
- *  @STEP1 
- *  DEFINE ROOT DIR FOR ASSETS
+ *  @STEP1
+ *  DEFINE OUTPUT DESTINATION PATH
+ *  !NOTE: take note of the naming pattern
  */
-const ROOT_DESTINATION = "./public";
 
-
+// TARGET DESTINATION
+const outputDir_main = './dist'
+const outputDir_html = `${outputDir_main}`;
+const outputDir_css = `${outputDir_main}/css`;
+const outputDir_js = `${outputDir_main}/js`;
+const outputDir_image = `${outputDir_main}/images`;
 
 
 
@@ -29,24 +34,6 @@ const ROOT_DESTINATION = "./public";
 
 /**
  *  @STEP2
- *  DEFINE PATH TARGET FILES TO MINIFY
- *  !NOTE: take note of the naming pattern
- */
-
-// TARGET DESTINATION
-const ouputDir_html = './';
-const ouputDir_css = `${ROOT_DESTINATION}/css`;
-const ouputDir_js = `${ROOT_DESTINATION}/js'`;
-const ouputDir_image = `${ROOT_DESTINATION}/images`;
-
-
-
-
-
-
-
-/**
- *  @STEP3
  *  DEFINE DEST PATH FOR OUTPUT FILE
  *  !NOTE: take note of the naming pattern
  */
@@ -57,26 +44,20 @@ const ouputDir_image = `${ROOT_DESTINATION}/images`;
  *  *1st - file to minify (js, html, css)
  *  *2nd - filename of the output file
  *  *3rd - extenstion of the output file
+ * 
+ *  * const assets = [
+ *  *    [`./index.html`,           '/index',   'html'],
+ *  *    [`./assets/css/style.css`, '/style',   'css'],
+ *  *    [`./assets/js/app.js`,     '/app',     'js'],
+ *  *    [`./assets/js/lib.js`,     '/lib',     'js']
+ *  *]
  */
 const assets = [
-    [`${ROOT_DESTINATION}/css/style.css`, '/style.min', 'css']
+    [`./index.html`, '/index', 'html'],
+    [`./assets/css/style.css`, '/style', 'css'],
+    [`./assets/js/app.js`, '/app', 'js'],
+    [`./assets/js/lib.js`, '/lib', 'js']
 ]
-
-
-/**
- * !IMAGES
- * TARGET FILES (RELATIVE PATH) TO MINIFY (ARRAY)
- */
-const images = `${ROOT_DESTINATION}/images/**/*.{jpg,JPG,jpeg,JPEG,png,svg,gif}`;
-
-
-
-
-
-
-
-
-
 
 
 
@@ -109,17 +90,16 @@ const images = `${ROOT_DESTINATION}/images/**/*.{jpg,JPG,jpeg,JPEG,png,svg,gif}`
 
 
 /**
- * CREATE ROOT DIR FOR ASSETS
- * ONLY IF NOT EXISTING
+ * !CREATE ROOT DIR FOR ASSETS ONLY IF NOT EXISTING
  */
-fs.access(ROOT_DESTINATION, function (err) {
+fs.access(outputDir_main, function (err) {
     if (err && err.code === 'ENOENT') {
-        fs.mkdir(ROOT_DESTINATION);
-        console.log(`✓ Root Destination: '${ROOT_DESTINATION}' not existing, created instead`)
-        return null;
+        fs.mkdir(outputDir_main, function () {
+            console.log(`✓ Root Destination: '${outputDir_main}' not existing, created instead`)
+        });
     }
-    console.log(`✓ Root Destination: '${ROOT_DESTINATION}' existing`)
 });
+
 
 /**
  * !JS/CSS MINIFICATION OPTIONS
@@ -164,9 +144,9 @@ assets.forEach(asset => {
             let destination;
 
             switch (extenstion) {
-                case 'html': destination = ouputDir_html; break;
-                case 'css': destination = ouputDir_css; break;
-                case 'js': destination = ouputDir_js; break;
+                case 'html': destination = outputDir_html; break;
+                case 'css': destination = outputDir_css; break;
+                case 'js': destination = outputDir_js; break;
                 default: destination = false; break;
             }
 
@@ -176,18 +156,25 @@ assets.forEach(asset => {
 
             const outputFile = `${destination}${fileOutputName}.${extenstion}`;
 
-            // create directory if not existing
             fs.access(destination, function (err) {
+
+                // create directory if not existing
                 if (err && err.code === 'ENOENT') {
-                    fs.mkdir(destination);
-                    console.log(`✓ Target Destination: '${destination}' not existing, created instead`)
-                    return null;
+                    fs.mkdir(destination, function () {
+                        console.log(`✓ Target Destination: '${destination}' not existing, created instead`)
+
+                        console.log(`✓ Succesfully Minified : '${destination}${fileOutputName}.${extenstion}'`)
+
+                        fs.writeFileSync(outputFile, minifiedBuffer);
+                    });
+                }
+
+                else {
+                    console.log(`✓ Succesfully Minified : '${destination}${fileOutputName}.${extenstion}'`)
+
+                    fs.writeFileSync(outputFile, minifiedBuffer);
                 }
             });
-
-            console.log(`✓ Succesfully Minified : '${destination}${fileOutputName}.${extenstion}'`)
-
-            fs.writeFileSync(outputFile, minifiedBuffer);
         })
 
         .catch(error => console.log(error));
