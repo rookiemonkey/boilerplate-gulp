@@ -2,6 +2,11 @@ const fs = require('fs');
 const minify = require('minify');
 const compress_images = require("compress-images")
 
+/**
+ * !PATHS ARE RELATIVE TO THIS FILE UNLESS
+ * !RECOMMENDED TO PUT THIS FILE ON ROOT DIR
+ */
+
 
 
 // ===========================================================================
