@@ -4,19 +4,15 @@ const compress_images = require("compress-images")
 
 
 
+// ===========================================================================
+// VARIABLES
+// ===========================================================================
+
 /**
  *  @STEP1 
  *  DEFINE ROOT DIR FOR ASSETS
  */
-const dist_assets = "./public";
-
-
-
-
-
-
-
-
+const ROOT_DESTINATION = "./public";
 
 
 
@@ -29,16 +25,26 @@ const dist_assets = "./public";
 /**
  *  @STEP2
  *  DEFINE PATH TARGET FILES TO MINIFY
- *  DEFINE DEST PATH FOR OUTPUT FILE 
  *  !NOTE: take note of the naming pattern
  */
 
-
 // TARGET DESTINATION
-const dist_html = './';
-const dist_css = `${dist_assets}/css`;
-const dist_js = `${dist_assets}/js'`;
-const dist_image = `${dist_assets}/images`; //!last slash important
+const ouputDir_html = './';
+const ouputDir_css = `${ROOT_DESTINATION}/css`;
+const ouputDir_js = `${ROOT_DESTINATION}/js'`;
+const ouputDir_image = `${ROOT_DESTINATION}/images`;
+
+
+
+
+
+
+
+/**
+ *  @STEP3
+ *  DEFINE DEST PATH FOR OUTPUT FILE
+ *  !NOTE: take note of the naming pattern
+ */
 
 /**
  * !JAVASCRIPT CSS HTML
@@ -48,16 +54,15 @@ const dist_image = `${dist_assets}/images`; //!last slash important
  *  *3rd - extenstion of the output file
  */
 const assets = [
-    [`${dist_assets}/css/style.css`, '/style.min', 'css']
+    [`${ROOT_DESTINATION}/css/style.css`, '/style.min', 'css']
 ]
+
 
 /**
  * !IMAGES
  * TARGET FILES (RELATIVE PATH) TO MINIFY (ARRAY)
  */
-
-const images = `${dist_assets}/images/**/*.{jpg,JPG,jpeg,JPEG,png,svg,gif}`;
-
+const images = `${ROOT_DESTINATION}/images/**/*.{jpg,JPG,jpeg,JPEG,png,svg,gif}`;
 
 
 
@@ -80,6 +85,36 @@ const images = `${dist_assets}/images/**/*.{jpg,JPG,jpeg,JPEG,png,svg,gif}`;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+// ===========================================================================
+// MINIFICATION PROCESS
+// NOTE:    Do not touch the code below unless you want to change something
+//          on the minification process
+// ===========================================================================
+
+
+/**
+ * CREATE ROOT DIR FOR ASSETS
+ * ONLY IF NOT EXISTING
+ */
+fs.access(ROOT_DESTINATION, function (err) {
+    if (err && err.code === 'ENOENT') {
+        fs.mkdir(ROOT_DESTINATION);
+        console.log(`✓ Root Destination: '${ROOT_DESTINATION}' not existing, created instead`)
+        return null;
+    }
+    console.log(`✓ Root Destination: '${ROOT_DESTINATION}' existing`)
+});
 
 /**
  * !JS/CSS MINIFICATION OPTIONS
@@ -124,17 +159,28 @@ assets.forEach(asset => {
             let destination;
 
             switch (extenstion) {
-                case 'html': destination = dist_html; break;
-                case 'css': destination = dist_css; break;
-                case 'js': destination = dist_js; break;
+                case 'html': destination = ouputDir_html; break;
+                case 'css': destination = ouputDir_css; break;
+                case 'js': destination = ouputDir_js; break;
                 default: destination = false; break;
             }
 
             if (!destination) {
-                console.log(`[ERROR: File Not Supported]: ${filePath}`)
+                console.log(`[ERROR: File Not Supported/Not Minified]: ${filePath}`)
             }
 
             const outputFile = `${destination}${fileOutputName}.${extenstion}`;
+
+            // create directory if not existing
+            fs.access(destination, function (err) {
+                if (err && err.code === 'ENOENT') {
+                    fs.mkdir(destination);
+                    console.log(`✓ Target Destination: '${destination}' not existing, created instead`)
+                    return null;
+                }
+            });
+
+            console.log(`✓ Succesfully Minified : '${destination}${fileOutputName}.${extenstion}'`)
 
             fs.writeFileSync(outputFile, minifiedBuffer);
         })
@@ -151,49 +197,49 @@ assets.forEach(asset => {
  * !IMAGE MINIFICATION PROCESS
  * !WARNING: not working properly
  */
-compress_images(
-    images,
+// compress_images(
+//     images,
 
-    dist_image,
+//     dist_image,
 
-    {
-        compress_force: true,
-        statistic: true,
-        autoupdate: true
-    },
+//     {
+//         compress_force: true,
+//         statistic: true,
+//         autoupdate: true
+//     },
 
-    false,
+//     false,
 
-    {
-        jpg: {
-            engine: "mozjpeg",
-            command: ["-quality", "60", '--ext=".min.jpg"']
-        }
-    },
-    {
-        png: {
-            engine: "pngquant",
-            command: ["--quality=20-50", "-o", '--ext=".min.png"']
-        }
-    },
-    {
-        svg: {
-            engine: "svgo",
-            command: "--multipass"
-        }
-    },
-    {
-        gif: {
-            engine: "gifsicle",
-            command: ["--colors", "64", "--use-col=web", '--ext=".min.gif"']
-        }
-    },
+//     {
+//         jpg: {
+//             engine: "mozjpeg",
+//             command: ["-quality", "60", '--ext=".min.jpg"']
+//         }
+//     },
+//     {
+//         png: {
+//             engine: "pngquant",
+//             command: ["--quality=20-50", "-o", '--ext=".min.png"']
+//         }
+//     },
+//     {
+//         svg: {
+//             engine: "svgo",
+//             command: "--multipass"
+//         }
+//     },
+//     {
+//         gif: {
+//             engine: "gifsicle",
+//             command: ["--colors", "64", "--use-col=web", '--ext=".min.gif"']
+//         }
+//     },
 
-    function (error, completed, statistic) {
-        console.log("-------------");
-        console.log(error);
-        console.log(completed);
-        console.log(statistic);
-        console.log("-------------");
-    }
-);
+//     function (error, completed, statistic) {
+//         console.log("-------------");
+//         console.log(error);
+//         console.log(completed);
+//         console.log(statistic);
+//         console.log("-------------");
+//     }
+// );
