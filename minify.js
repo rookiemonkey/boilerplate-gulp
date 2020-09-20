@@ -20,11 +20,12 @@ const compress_images = require("compress-images")
  */
 
 // TARGET DESTINATION
-const outputDir_main = './dist'
+const outputDir_main = './dist';
+const outputDir_sub = '/assets'; // ! eg: ./dist/assets
 const outputDir_html = `${outputDir_main}`;
-const outputDir_css = `${outputDir_main}/css`;
-const outputDir_js = `${outputDir_main}/js`;
-const outputDir_image = `${outputDir_main}/images`;
+const outputDir_css = `${outputDir_main}${outputDir_sub}/css`;
+const outputDir_js = `${outputDir_main}${outputDir_sub}/js`;
+const outputDir_image = `${outputDir_main}${outputDir_sub}/images`;
 
 
 
@@ -82,6 +83,15 @@ const assets = [
 
 
 
+
+
+
+
+
+
+
+
+
 // ===========================================================================
 // MINIFICATION PROCESS
 // NOTE:    Do not touch the code below unless you want to change something
@@ -90,15 +100,26 @@ const assets = [
 
 
 /**
- * !CREATE ROOT DIR FOR ASSETS ONLY IF NOT EXISTING
+ * !CREATE ROOT & SUB DIR FOR ASSETS ONLY IF NOT EXISTING
  */
 fs.access(outputDir_main, function (err) {
     if (err && err.code === 'ENOENT') {
         fs.mkdir(outputDir_main, function () {
-            console.log(`✓ Root Destination: '${outputDir_main}' not existing, created instead`)
+            console.log(`✓ OUTPUT Root Destination: '${outputDir_main}' not existing, created instead`)
         });
     }
 });
+
+fs.access(`${outputDir_main}${outputDir_sub}`, function (err) {
+    if (err && err.code === 'ENOENT') {
+        fs.mkdir(`${outputDir_main}${outputDir_sub}`, function () {
+            console.log(`✓ OUTPUT Sub Destination: '${outputDir_main}${outputDir_sub}' not existing, created instead`)
+        });
+    }
+});
+
+
+
 
 
 /**
@@ -156,10 +177,10 @@ assets.forEach(asset => {
 
             const outputFile = `${destination}${fileOutputName}.${extenstion}`;
 
-            fs.access(destination, function (err) {
+            fs.access(destination, function (error) {
 
                 // create directory if not existing
-                if (err && err.code === 'ENOENT') {
+                if (error && error.code === 'ENOENT') {
                     fs.mkdir(destination, function () {
                         console.log(`✓ Target Destination: '${destination}' not existing, created instead`)
 
