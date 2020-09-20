@@ -21,7 +21,7 @@ const compress_images = require("compress-images")
 
 // TARGET DESTINATION
 const outputDir_main = './dist';
-const outputDir_sub = '/assets'; // ! eg: ./dist/assets
+const outputDir_sub = '/assets';
 const outputDir_html = `${outputDir_main}`;
 const outputDir_css = `${outputDir_main}${outputDir_sub}/css`;
 const outputDir_js = `${outputDir_main}${outputDir_sub}/js`;
