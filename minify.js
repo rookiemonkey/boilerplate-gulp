@@ -1,4 +1,5 @@
 const fs = require('fs');
+const ncp = require('ncp').ncp;
 const minify = require('minify');
 const compress_images = require("compress-images")
 
@@ -66,6 +67,18 @@ const assets = [
 
 
 
+/**
+ *  @STEP3 for other files
+ *  DEFINE TARGET DIRECTORY TO COPY TO THE OUTPUT MAIN DIRECTORY
+ *  !NOTE: take note of the naming pattern
+ *  *1st - directory to copy
+ *  *2nd - destination directory
+ */
+
+const others = [
+    [`./assets/fonts`, `${outputDir_main}${outputDir_sub}/fonts`],
+    [`./assets/images`, `${outputDir_main}${outputDir_sub}/images`],
+]
 
 
 
@@ -203,6 +216,50 @@ assets.forEach(asset => {
 
 
 
+
+
+
+
+// ===========================================================================
+// OTHER FILES COPY PROCESS
+// Copies other files (not css, js, html) to the output main directory
+// ncp(source, destination, callback)  
+// ===========================================================================
+
+others.forEach(directory => {
+    const [source, output] = directory;
+
+    fs.access(output, function (err) {
+        if (err && err.code === 'ENOENT') {
+
+            // err.code === 'ENOENT' if sub directory is not existing
+            fs.mkdir(output, function () {
+                console.log(`✓ OUTPUT Sub Destination: '${output}' not existing, created instead`)
+
+                ncp(source, output,
+                    function (err) {
+                        if (err) {
+                            return console.error(err);
+                        }
+
+                        console.log(`✓ Files from '${output}' copied to '${output}'`);
+                    });
+            });
+        }
+
+        else {
+            // just continue to copy
+            ncp(source, output,
+                function (err) {
+                    if (err) {
+                        return console.error(err);
+                    }
+
+                    console.log(`✓ Files from '${output}' copied to '${output}'`);
+                });
+        }
+    });
+})
 
 
 
