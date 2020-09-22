@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require('fs');
 const ncp = require('ncp').ncp;
 const minify = require('minify');
@@ -21,7 +22,7 @@ const compress_images = require("compress-images")
  */
 
 // TARGET DESTINATION
-const outputDir_main = './dist';
+const outputDir_main = path.join(__dirname, './build');
 const outputDir_sub = '/assets';
 const outputDir_html = `${outputDir_main}`;
 const outputDir_css = `${outputDir_main}${outputDir_sub}/css`;
@@ -48,17 +49,15 @@ const outputDir_image = `${outputDir_main}${outputDir_sub}/images`;
  *  *3rd - extenstion of the output file
  * 
  *  * const assets = [
- *  *    [`./index.html`,           '/index',   'html'],
- *  *    [`./assets/css/style.css`, '/style',   'css'],
- *  *    [`./assets/js/app.js`,     '/app',     'js'],
- *  *    [`./assets/js/lib.js`,     '/lib',     'js']
+ *  * [`${path.join(__dirname, './index.html')}`, '/index', 'html'],
+ *  * [`${path.join(__dirname, './assets/css/style.css')}`, '/style', 'css'],
+ *  * [`${path.join(__dirname, './assets/js/wow.js')}`, '/wow', 'js'],
  *  *]
  */
 const assets = [
-    [`./index.html`, '/index', 'html'],
-    [`./assets/css/style.css`, '/style', 'css'],
-    [`./assets/js/app.js`, '/app', 'js'],
-    [`./assets/js/lib.js`, '/lib', 'js']
+    [`${path.join(__dirname, './index.html')}`, '/index', 'html'],
+    [`${path.join(__dirname, './assets/css/style.css')}`, '/style', 'css'],
+    [`${path.join(__dirname, './assets/js/wow.js')}`, '/wow', 'js'],
 ]
 
 
@@ -73,12 +72,18 @@ const assets = [
  *  !NOTE: take note of the naming pattern
  *  *1st - directory to copy
  *  *2nd - destination directory
+ * 
+ *  *const others = [
+ *  * [`${path.join(__dirname, './assets/fonts')}`, `${outputDir_main}${outputDir_sub}/fonts`],
+ *  * [`${path.join(__dirname, './assets/images')}`, `${outputDir_main}${outputDir_sub}/images`]*,
+ *  * ]
  */
 
 const others = [
-    [`./assets/fonts`, `${outputDir_main}${outputDir_sub}/fonts`],
-    [`./assets/images`, `${outputDir_main}${outputDir_sub}/images`],
+    [`${path.join(__dirname, './assets/fonts')}`, `${outputDir_main}${outputDir_sub}/fonts`],
+    [`${path.join(__dirname, './assets/images')}`, `${outputDir_main}${outputDir_sub}/images`],
 ]
+
 
 
 
