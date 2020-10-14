@@ -2,7 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const ncp = require('ncp').ncp;
 const minify = require('minify');
-const compress_images = require("compress-images")
+const imagemin = require('imagemin');
+const imageminJpegtran = require('imagemin-jpegtran');
+const imageminPngquant = require('imagemin-pngquant');
 
 /**
  * !PATHS ARE RELATIVE TO THIS FILE UNLESS
@@ -27,7 +29,7 @@ const outputDir_sub = '/assets';
 const outputDir_html = `${outputDir_main}`;
 const outputDir_css = `${outputDir_main}${outputDir_sub}/css`;
 const outputDir_js = `${outputDir_main}${outputDir_sub}/js`;
-const outputDir_image = `${outputDir_main}${outputDir_sub}/images`;
+const outputDir_images = `${outputDir_main}${outputDir_sub}/images`;
 
 
 
@@ -37,9 +39,11 @@ const outputDir_image = `${outputDir_main}${outputDir_sub}/images`;
 
 /**
  *  @STEP2
- *  DEFINE DEST PATH FOR OUTPUT FILE
+ *  DEFINE DEST PATH OF THE TARGET FILES
  *  !NOTE: take note of the naming pattern
  */
+
+
 
 /**
  * !JAVASCRIPT CSS HTML
@@ -67,15 +71,23 @@ const assets = [
 
 
 /**
- *  @STEP3 for other files
- *  DEFINE TARGET DIRECTORY TO COPY TO THE OUTPUT MAIN DIRECTORY
- *  !NOTE: take note of the naming pattern
+ * !IMAGES (PNG, JPG)
+ */
+const images = `${path.join(__dirname, './assets/images')}`;
+
+
+
+
+
+
+/**
+ *  !OTHER FILES (FONTS etc..)
  *  *1st - directory to copy
  *  *2nd - destination directory
  * 
  *  *const others = [
  *  * [`${path.join(__dirname, './assets/fonts')}`, `${outputDir_main}${outputDir_sub}/fonts`],
- *  * [`${path.join(__dirname, './assets/images')}`, `${outputDir_main}${outputDir_sub}/images`]*,
+ *  * [`${path.join(__dirname, './assets/vendors')}`, `${outputDir_main}${outputDir_sub}/vendors`],
  *  * ]
  */
 
@@ -83,6 +95,26 @@ const others = [
     [`${path.join(__dirname, './assets/fonts')}`, `${outputDir_main}${outputDir_sub}/fonts`],
     [`${path.join(__dirname, './assets/images')}`, `${outputDir_main}${outputDir_sub}/images`],
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -120,6 +152,7 @@ const others = [
 /**
  * !CREATE ROOT & SUB DIR FOR ASSETS ONLY IF NOT EXISTING
  */
+
 fs.access(outputDir_main, function (err) {
     if (err && err.code === 'ENOENT') {
         fs.mkdir(outputDir_main, function () {
@@ -268,53 +301,49 @@ others.forEach(directory => {
 
 
 
-/**
- * !IMAGE MINIFICATION PROCESS
- * !WARNING: not working properly
- */
-// compress_images(
-//     images,
 
-//     dist_image,
 
-//     {
-//         compress_force: true,
-//         statistic: true,
-//         autoupdate: true
-//     },
 
-//     false,
+    // ===========================================================================
+    // IMAGE MINIFICATION PROCESS
+    // ===========================================================================
+    (async () => {
+        fs.access(images, function (err) {
 
-//     {
-//         jpg: {
-//             engine: "mozjpeg",
-//             command: ["-quality", "60", '--ext=".min.jpg"']
-//         }
-//     },
-//     {
-//         png: {
-//             engine: "pngquant",
-//             command: ["--quality=20-50", "-o", '--ext=".min.png"']
-//         }
-//     },
-//     {
-//         svg: {
-//             engine: "svgo",
-//             command: "--multipass"
-//         }
-//     },
-//     {
-//         gif: {
-//             engine: "gifsicle",
-//             command: ["--colors", "64", "--use-col=web", '--ext=".min.gif"']
-//         }
-//     },
 
-//     function (error, completed, statistic) {
-//         console.log("-------------");
-//         console.log(error);
-//         console.log(completed);
-//         console.log(statistic);
-//         console.log("-------------");
-//     }
-// );
+            // err.code === 'ENOENT' if sub directory is not existing
+            if (err && err.code === 'ENOENT') {
+                fs.mkdir(images, function () {
+                    console.log(`✓ OUTPUT Sub Destination: '${images}' not existing, created instead`)
+
+                    const files = await imagemin([`${images}/*.{jpg,png}`], {
+                        destination: outputDir_images,
+                        plugins: [
+                            imageminJpegtran(),
+                            imageminPngquant({ quality: [0.6, 0.8] })
+                        ]
+                    });
+
+                    console.log(files);
+
+                });
+
+            }
+
+
+
+
+            // continue to minify and dump to the destination folder
+            else {
+                const files = await imagemin([`${images}/*.{jpg,png}`], {
+                    destination: outputDir_images,
+                    plugins: [
+                        imageminJpegtran(),
+                        imageminPngquant({ quality: [0.6, 0.8] })
+                    ]
+                });
+
+                console.log(files);
+            }
+        })
+    })();

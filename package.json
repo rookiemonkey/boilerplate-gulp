@@ -9,10 +9,10 @@
   "author": "Kevin Basina",
   "license": "MIT",
   "devDependencies": {
-    "compress-images": "^1.9.5",
-    "gifsicle": "^5.1.0",
+    "imagemin": "^7.0.1",
+    "imagemin-jpegtran": "^7.0.0",
+    "imagemin-pngquant": "^9.0.1",
     "minify": "^5.2.0",
-    "pngquant-bin": "^6.0.0",
     "ncp": "^2.0.0"
   },
   "dependencies": {}
