@@ -26,11 +26,13 @@ const paths = {
     },
     styles: {
         src: './assets/css/*.css',
-        dest: './build/assets/css'
+        dest: './build/assets/css',
+        output: 'main' // w/o extension name
     },
     scripts: {
         src: './assets/js/*.js',
-        dest: './build/assets/js'
+        dest: './build/assets/js',
+        output: 'main.js'
     },
     images: {
         src: './assets/images/*',
@@ -56,12 +58,7 @@ const styles = () =>
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(postcss([autoprefixer(), cssnano()]))
-        .pipe(
-            rename({
-                basename: 'styles',
-                suffix: '.min'
-            })
-        )
+        .pipe(rename({ basename: paths.styles.output }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(paths.styles.dest))
         .pipe(browserSync.stream());
@@ -78,7 +75,7 @@ const scripts = () =>
             })
         )
         .pipe(terser())
-        .pipe(concat('main.js'))
+        .pipe(concat(paths.scripts.output))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(paths.scripts.dest));
 
