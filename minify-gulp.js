@@ -37,7 +37,11 @@ const paths = {
     images: {
         src: './assets/images/*',
         dest: './build/assets/images'
-    }
+    },
+    fonts: {
+        src: '../assets/fonts/*',
+        dest: '../build/assets/fonts'
+    },
 };
 
 const clean = () => del(['./build']);
@@ -87,9 +91,17 @@ const images = () =>
         .pipe(imagemin())
         .pipe(gulp.dest(paths.images.dest));
 
+// Copy the whole folder
+const fonts = () =>
+    gulp
+        .src(paths.fonts.src)
+        .pipe(plumber())
+        .pipe(gulp.dest(paths.fonts.dest));
+
+
 const build = gulp.series(
     clean,
-    gulp.parallel(html, styles, scripts, images)
+    gulp.parallel(html, styles, scripts, images, fonts)
 );
 
 exports.clean = clean;
