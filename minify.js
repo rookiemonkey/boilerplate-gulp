@@ -1,3 +1,9 @@
+
+/**
+ * !THIS IS MY VERSION BEFORE I DISCOVERED GULP :)
+ * !IM JUST LEAVING THIS ONE RIGHT HERE :D
+ */
+
 const path = require('path');
 const fs = require('fs');
 const ncp = require('ncp').ncp;

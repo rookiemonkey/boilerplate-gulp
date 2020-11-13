@@ -5,7 +5,7 @@
   "main": "minify.js",
   "scripts": {
     "minify": "node minify.js",
-    "gulp": "gulp"
+    "minify:gulp": "clear && gulp -f minify-gulp.js"
   },
   "author": "Kevin Basina",
   "license": "MIT",
@@ -23,17 +23,9 @@
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^8.0.0",
     "gulp-rename": "^2.0.0",
-    "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-terser": "^1.2.0",
-    "imagemin": "^7.0.1",
-    "imagemin-jpegtran": "^7.0.0",
-    "imagemin-pngquant": "^9.0.1",
-    "minify": "^5.2.0",
-    "ncp": "^2.0.0"
-  },
-  "dependencies": {
     "gulp-htmlmin": "^5.0.1"
   }
 }

@@ -1,0 +1,28 @@
+@font-face {
+    font-family: "Digital";
+    src: url('../fonts/digital.ttf')
+}
+
+body {
+
+    background-image: url('../images/dog.jpg');
+    animation-duration: 500ms;
+
+    h1 {
+        color: white;
+
+        span {
+            color: black;
+            font-family: 'Digital';
+
+            &:hover {
+                color: white;
+            }
+        }
+    }
+
+    input[type='text'] {
+    padding: 100000px;
+    animation-duration: 500ms;
+}
+}

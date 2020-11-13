@@ -1,0 +1,1 @@
+const sample4 = 0;

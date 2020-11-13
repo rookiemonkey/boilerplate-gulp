@@ -15,7 +15,6 @@ const browserSync = require('browser-sync').create();
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
-const replace = require('gulp-replace');
 const imagemin = require('gulp-imagemin');
 const plumber = require('gulp-plumber');
 
@@ -24,9 +23,16 @@ const paths = {
         src: './index.html',
         dest: './build'
     },
+    // // !THIS IS FOR CSS
+    // styles: {
+    //     src: './assets/css/*.css',
+    //     dest: './build/assets/css',
+    //     output: 'main' // w/o extension name
+    // },
+    // !THIS IS FOR SCSS
     styles: {
-        src: './assets/css/*.css',
-        dest: './build/assets/css',
+        src: './assets/scss/index.scss',
+        dest: './build/assets/scss',
         output: 'main' // w/o extension name
     },
     scripts: {
@@ -39,22 +45,39 @@ const paths = {
         dest: './build/assets/images'
     },
     fonts: {
-        src: '../assets/fonts/*',
-        dest: '../build/assets/fonts'
+        src: './assets/fonts/*',
+        dest: './build/assets/fonts'
     },
+    videos: {
+        src: './assets/videos/*',
+        dest: './build/assets/videos'
+    }
 };
 
+
+// delete the old build version
 const clean = () => del(['./build']);
+
+
 
 // Copies all html files
 const html = () =>
     gulp
         .src(paths.html.src)
         .pipe(plumber())
-        .pipe(htmlmin({ collapseWhitespace: false }))
+        .pipe(htmlmin({
+            minifyCSS: true, // inline css,
+            minifyJS: true, // inline js, not working
+            removeComments: true,
+            removeAttributeQuotes: true,
+            collapseWhitespace: true
+        }))
         .pipe(gulp.dest(paths.html.dest));
 
+
+
 // Convert scss to css, auto-prefix and rename into styles.min.css
+// works both for css and sass files, not only for sass files
 const styles = () =>
     gulp
         .src(paths.styles.src)
@@ -67,7 +90,9 @@ const styles = () =>
         .pipe(gulp.dest(paths.styles.dest))
         .pipe(browserSync.stream());
 
-// Minify all javascript files and concat them into a single app.min.js
+
+
+// Minify all javascript files and consolidate them into a single .js file
 const scripts = () =>
     gulp
         .src(paths.scripts.src)
@@ -83,7 +108,9 @@ const scripts = () =>
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(paths.scripts.dest));
 
-// Copy and minify images
+
+
+// Copy the IMAGES folder/contents minified
 const images = () =>
     gulp
         .src(paths.images.src)
@@ -91,7 +118,9 @@ const images = () =>
         .pipe(imagemin())
         .pipe(gulp.dest(paths.images.dest));
 
-// Copy the whole folder
+
+
+// Copy the FONTS folder/contents
 const fonts = () =>
     gulp
         .src(paths.fonts.src)
@@ -99,14 +128,27 @@ const fonts = () =>
         .pipe(gulp.dest(paths.fonts.dest));
 
 
+
+// Copy the VIDEOS folder/contents
+const videos = () =>
+    gulp
+        .src(paths.videos.src)
+        .pipe(plumber())
+        .pipe(gulp.dest(paths.videos.dest));
+
+
+
+// Define the series of tasks needed to accomplished by gulp
 const build = gulp.series(
     clean,
-    gulp.parallel(html, styles, scripts, images, fonts)
+    gulp.parallel(html, styles, scripts, images, fonts, videos)
 );
 
 exports.clean = clean;
 exports.styles = styles;
 exports.scripts = scripts;
 exports.images = images;
+exports.fonts = fonts;
+exports.videos = videos;
 exports.build = build;
 exports.default = build;

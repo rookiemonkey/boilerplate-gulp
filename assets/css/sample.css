@@ -1,0 +1,13 @@
+* {
+    display: inline;
+    background-color: pink;
+}
+
+body {
+    background-color: pink;
+}
+
+input[type='text'] {
+    padding: 100000px;
+    animation-duration: 500ms;
+}
