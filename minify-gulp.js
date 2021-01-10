@@ -32,7 +32,7 @@ const paths = {
     // !THIS IS FOR SCSS
     styles: {
         src: './assets/scss/index.scss',
-        dest: './build/assets/scss',
+        dest: './build/assets/css',
         output: 'main' // w/o extension name
     },
     scripts: {
